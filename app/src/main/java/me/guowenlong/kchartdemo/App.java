@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.google.gson.GsonBuilder;
 
+import me.guowenlong.kchartdemo.http.Api;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -11,16 +12,13 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * 类的描述
+ * Application的基础类
  *
  * @author guowenlong
  * 创建时间:2018-07-17-23:59
  */
 public class App extends Application {
     private static Api api;
-
-    private static String url = "https://api.hadax.com/market";
-
     //后来的api
     public static synchronized Api getApi() {
         if (null == api) {
@@ -31,7 +29,7 @@ public class App extends Application {
                     .client(okBuilder.build())
                     .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()))
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .baseUrl(url)
+                    .baseUrl(C.URL)
                     .build();
             api = retrofit.create(Api.class);
         }

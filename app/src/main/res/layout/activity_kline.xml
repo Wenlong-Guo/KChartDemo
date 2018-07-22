@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.github.mikephil.charting.charts.CombinedChart
+        android:id="@+id/candler_chart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4" />
+
+    <com.github.mikephil.charting.charts.CombinedChart
+        android:id="@+id/candler_chart_bottom"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"  />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_5min"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:checked="true"
+            android:gravity="center"
+            android:text="@string/tab_5min"
+            android:textColor="@android:color/black" />
+
+        <RadioButton
+            android:id="@+id/rb_30min"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/tab_30min"
+            android:textColor="@android:color/black" />
+
+        <RadioButton
+            android:id="@+id/rb_60min"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/tab_60min"
+            android:textColor="@android:color/black" />
+
+        <RadioButton
+            android:id="@+id/rb_1day"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/tab_1day"
+            android:textColor="@android:color/black" />
+
+        <RadioButton
+            android:id="@+id/rb_1mon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/tab_1mon"
+            android:textColor="@android:color/black" />
+    </RadioGroup>
+</LinearLayout>

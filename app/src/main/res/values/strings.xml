@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">K Chart Demo</string>
+    <string name="symbols_list">币种列表</string>
+    <string name="tab_1mon">1mon</string>
+    <string name="tab_1day">1day</string>
+    <string name="tab_60min">60min</string>
+    <string name="tab_30min">30min</string>
+    <string name="tab_5min">5min</string>
 </resources>
