@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private SymbolsAdatper mAdapter;
     private SymbolsEntity mSymbolsEntity;
-
+    public static final String INTENT_SYMBOL = "symbol";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(MainActivity.this, KLineActivity.class);
-//                intent.putExtra("symbol","btcusdt");
-                intent.putExtra("symbol",mSymbolsEntity.getData().get(position)+"usdt");
+                intent.putExtra(INTENT_SYMBOL,mSymbolsEntity.getData().get(position)+"usdt");
                 startActivity(intent);
             }
         });
