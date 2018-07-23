@@ -1,4 +1,4 @@
-package me.guowenlong.kchartdemo.ui.kline;
+package me.guowenlong.kchartdemo.chart;
 
 import android.graphics.Matrix;
 import android.view.MotionEvent;
@@ -11,7 +11,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 
 /**
- * 类的描述
+ * 联动
  *
  * @author guowenlong
  * 创建时间:2018-07-22-15:09
@@ -62,17 +62,13 @@ public class CoupleChartGestureListener implements OnChartGestureListener {
     public void onChartTranslate(MotionEvent me, float dX, float dY) {
         syncCharts();
     }
-    public void syncCharts() {
+    private void syncCharts() {
         Matrix srcMatrix;
         float[] srcVals = new float[9];
         Matrix dstMatrix;
         float[] dstVals = new float[9];
-
-        // get src chart translation matrix:
         srcMatrix = srcChart.getViewPortHandler().getMatrixTouch();
         srcMatrix.getValues(srcVals);
-
-        // apply X axis scaling and position to dst charts:
         for (Chart dstChart : dstCharts) {
             if (dstChart.getVisibility() == View.VISIBLE) {
                 dstMatrix = dstChart.getViewPortHandler().getMatrixTouch();

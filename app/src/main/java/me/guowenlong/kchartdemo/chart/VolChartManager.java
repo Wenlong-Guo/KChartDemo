@@ -39,7 +39,18 @@ public class VolChartManager extends BaseChartManager implements IChart {
 
     @Override
     void initLabels() {
+        mLegend.setEnabled(false);
+    }
 
+    @Override
+    void initX() {
+        mXAxis.setDrawLabels(false);
+    }
+
+    @Override
+    void initLeftY() {
+        super.initLeftY();
+        mLeftYAxis.setLabelCount(3,false);
     }
 
     private BarData getBarData(List<DataBean> beans) {

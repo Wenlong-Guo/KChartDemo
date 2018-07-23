@@ -1,5 +1,6 @@
 package me.guowenlong.kchartdemo.chart;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.CandleData;
@@ -16,11 +17,7 @@ import me.guowenlong.kchartdemo.entity.KLineEntity;
  * 创建时间:2018-07-22-21:22
  */
 public interface IChart {
-     void initChart();
-     void initChartSetting();
+     void bindChart(Chart[] charts) ;
      void showChart();
-     void addLineData(LineData lineData);
-     void addCandleData(CandleData candleData);
-     void addBarData(BarData barData);
      void setData(List<KLineEntity.DataBean> lists);
 }

@@ -1,8 +1,5 @@
 package me.guowenlong.kchartdemo.ui.kline;
 
-import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,12 +8,7 @@ import android.view.View;
 
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.List;
 
 import me.guowenlong.kchartdemo.App;
 import me.guowenlong.kchartdemo.C;
@@ -24,7 +16,6 @@ import me.guowenlong.kchartdemo.R;
 import me.guowenlong.kchartdemo.chart.KLineChartManager;
 import me.guowenlong.kchartdemo.chart.VolChartManager;
 import me.guowenlong.kchartdemo.entity.KLineEntity;
-import me.guowenlong.kchartdemo.entity.KLineEntity.DataBean;
 import me.guowenlong.kchartdemo.http.RxSchedulers;
 import me.guowenlong.kchartdemo.ui.main.MainActivity;
 import rx.Observable;
@@ -36,7 +27,7 @@ import rx.Observer;
  * @author guowenlong
  * 创建时间:2018-07-18-2:43
  * todo MACD线 EMA线
- * todo MarkerView
+ * todo MarkerView 展示数据
  */
 public class KLineActivity extends AppCompatActivity implements View.OnClickListener {
     public static String period = C.TAB_TIME_DEFAULT;
@@ -44,7 +35,6 @@ public class KLineActivity extends AppCompatActivity implements View.OnClickList
     private CombinedChart mChartBottom;
     private KLineChartManager mKLineChartManager;
     private VolChartManager mVolChartManager;
-    private List<DataBean> list;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,24 +60,13 @@ public class KLineActivity extends AppCompatActivity implements View.OnClickList
 
     private void initKLineChart() {
         mKLineChartManager = new KLineChartManager(mChart);
-        mKLineChartManager.setOnChartGestureListener(new CoupleChartGestureListener(mChart, new Chart[]{mChartBottom}));
-        mKLineChartManager.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                int i = (int) value % list.size();
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                if (i > list.size() - 1) return "";
-                return sdf.format(list.get(i).getId() * 1000L);
-            }
-        });
+        mKLineChartManager.bindChart(new Chart[]{mChartBottom});
     }
 
     private void initChartBottom() {
         mVolChartManager = new VolChartManager(mChartBottom);
-        mVolChartManager.setOnChartGestureListener(new CoupleChartGestureListener(mChartBottom, new Chart[]{mChart}));
+        mVolChartManager.bindChart(new Chart[]{mChart});
     }
-
-
 
     @Override
     protected void onResume() {
@@ -105,7 +84,6 @@ public class KLineActivity extends AppCompatActivity implements View.OnClickList
             public void onNext(KLineEntity kLine) {
                 if (kLine != null && TextUtils.equals(kLine.getStatus(), C.STATUS_OK) && kLine.getData() != null) {
                     Collections.reverse(kLine.getData());
-                    list = kLine.getData();
 
                     mKLineChartManager.setData(kLine.getData());
                     mKLineChartManager.showChart();

@@ -1,10 +1,13 @@
 package me.guowenlong.kchartdemo.chart;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.annotation.ColorRes;
 
 import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
@@ -12,12 +15,15 @@ import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import me.guowenlong.kchartdemo.R;
 import me.guowenlong.kchartdemo.Utils;
-import me.guowenlong.kchartdemo.entity.KLineEntity;
 import me.guowenlong.kchartdemo.entity.KLineEntity.DataBean;
 
 /**
@@ -27,16 +33,25 @@ import me.guowenlong.kchartdemo.entity.KLineEntity.DataBean;
  * 创建时间:2018-07-22-17:50
  */
 public class KLineChartManager extends BaseChartManager implements IChart {
-    public KLineChartManager(CombinedChart combineChart ) {
+    public KLineChartManager(CombinedChart combineChart) {
         super(combineChart);
     }
 
     @Override
-    public void setData(List<DataBean> lists) {
+    public void setData(final List<DataBean> lists) {
         super.setData(lists);
-        if(lists.size()>20) {
+        setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                int i = (int) value % mSize;
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+                if (i > mSize - 1) return "";
+                return sdf.format(lists.get(i).getId() * 1000L);
+            }
+        });
+        if (lists.size() > 20) {
             addLineData(getLineData(lists));
-        }else{
+        } else {
             cleanAllData();
         }
         addCandleData(generateCandleData(getYData(lists)));
@@ -44,18 +59,24 @@ public class KLineChartManager extends BaseChartManager implements IChart {
 
     private LineData getLineData(List<DataBean> list) {
         LineData lineData = new LineData();
-        lineData.addDataSet(getLineDataSet(5, list));
-        lineData.addDataSet(getLineDataSet(10, list));
-        lineData.addDataSet(getLineDataSet(20, list));
+        lineData.addDataSet(getMALineDataSet(5, list,  getColor(R.color.MA5),"ma5"));
+        lineData.addDataSet(getMALineDataSet(10, list, getColor(R.color.MA10),"ma10"));
+        lineData.addDataSet(getMALineDataSet(20, list, getColor(R.color.MA20),"ma20"));
         return lineData;
     }
 
-    private LineDataSet getLineDataSet(int days, List<DataBean> list) {
-        List<Entry> strings = Utils.countMA(list, days);
-        LineDataSet dataSet = new LineDataSet(strings, "");
+    private int getColor(@ColorRes int id){
+        return mCombineChart.getContext().getResources().getColor(id);
+    }
+
+    private LineDataSet getMALineDataSet(int days, List<DataBean> list, int color,String label) {
+        ArrayList<Float> floats = new ArrayList<>();
+        for (DataBean b : list) floats.add(b.getClose());
+        List<Entry> strings = Utils.countMA(floats, days);
+        LineDataSet dataSet = new LineDataSet(strings, label);
         dataSet.setDrawCircles(false);
         dataSet.setDrawValues(false);
-        dataSet.setColor(Color.BLUE);
+        dataSet.setColor(color);
         dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         return dataSet;
     }
@@ -72,7 +93,7 @@ public class KLineChartManager extends BaseChartManager implements IChart {
     }
 
     private CandleData generateCandleData(List<CandleEntry> yVals) {
-        CandleDataSet set = new CandleDataSet(yVals, "");
+        CandleDataSet set = new CandleDataSet(yVals, "涨跌");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setShadowWidth(0.7f);
         set.setDecreasingColor(Color.RED);
@@ -89,6 +110,8 @@ public class KLineChartManager extends BaseChartManager implements IChart {
 
     @Override
     void initLabels() {
+        LegendEntry legendEntry = new LegendEntry();
+
 //        Legend l = mCombineChart.getLegend();  // 设置比例图标示
 //        l.setPosition(Legend.LegendPosition.BELOW_CHART_RIGHT);  //显示位置
 //        l.setForm(Legend.LegendForm.SQUARE);// 样式

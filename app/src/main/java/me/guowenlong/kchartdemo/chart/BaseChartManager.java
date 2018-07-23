@@ -3,6 +3,7 @@ package me.guowenlong.kchartdemo.chart;
 
 import android.graphics.Color;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -12,7 +13,6 @@ import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
 
 import java.util.List;
 
@@ -26,12 +26,12 @@ import me.guowenlong.kchartdemo.entity.KLineEntity;
  */
 public abstract class BaseChartManager implements IChart {
     CombinedChart mCombineChart;
-    private YAxis mLeftYAxis;
+    YAxis mLeftYAxis;
     private YAxis mRightYAxis;
-    private XAxis mXAxis;
+    XAxis mXAxis;
     Legend mLegend;
     private CombinedData mCombinedData;
-    private int mSize;
+    int mSize;
 
     BaseChartManager(CombinedChart combineChart) {
         mCombineChart = combineChart;
@@ -43,21 +43,13 @@ public abstract class BaseChartManager implements IChart {
         initChart();
     }
 
-    @Override
-    public void initChart() {
+    private void initChart() {
         initChartSetting();
         initLeftY();
         initRightY();
         initX();
         initLabels();
     }
-
-    @Override
-    public void setData(List<KLineEntity.DataBean> lists) {
-        mSize = null == lists ? 0 : lists.size();
-    }
-
-    @Override
     public void initChartSetting() {
         mCombineChart.setDragDecelerationEnabled(false);
         mCombineChart.setDoubleTapToZoomEnabled(false);
@@ -69,7 +61,7 @@ public abstract class BaseChartManager implements IChart {
         mCombineChart.setPinchZoom(false);// if disabled, scaling can be done on x- and y-axis separately
         mCombineChart.setScaleYEnabled(false);// if disabled, scaling can be done on x-axis
         mCombineChart.setScaleXEnabled(true);// if disabled, scaling can be done on  y-axis
-        mCombineChart.setDrawBorders(true);
+        mCombineChart.setDrawBorders(false);
         mCombineChart.setAutoScaleMinMaxEnabled(true);
         mCombineChart.setVisibleXRangeMinimum(2);
         mCombineChart.setBackgroundColor(Color.WHITE);// 设置背景
@@ -77,36 +69,7 @@ public abstract class BaseChartManager implements IChart {
         mCombineChart.animateX(2000); // 立即执行的动画,x轴
     }
 
-    @Override
-    public void showChart() {
-        mCombineChart.clear();
-        mCombineChart.setData(mCombinedData);
-        mXAxis.setAxisMinimum(-0.5f);
-        mXAxis.setAxisMaximum(mSize - 0.5f);
-        mCombineChart.setVisibleXRangeMinimum(3);
-        mCombineChart.zoom(mSize < 20 ? 0f : 15f, 0f, 0, 0);
-        mCombineChart.moveViewToX(mSize);
-        mCombineChart.invalidate();
-    }
-
-    private void initX() {
-        mXAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        mXAxis.setDrawGridLines(true);
-        mXAxis.setGridColor(Color.BLUE);//X轴刻度线颜色
-        mXAxis.setTextColor(Color.GREEN);//X轴文字颜色
-        mXAxis.setLabelCount(5);
-        mXAxis.setAvoidFirstLastClipping(true);
-    }
-
-    public void setValueFormatter(IAxisValueFormatter iAxisValueFormatter) {
-        mXAxis.setValueFormatter(iAxisValueFormatter);
-    }
-
-    public void setOnChartGestureListener(OnChartGestureListener l) {
-        mCombineChart.setOnChartGestureListener(l);
-    }
-
-    private void initLeftY() {
+    void initLeftY() {
         mLeftYAxis.setEnabled(true);
         mLeftYAxis.setLabelCount(4, false);
         mLeftYAxis.setDrawGridLines(true);
@@ -120,24 +83,57 @@ public abstract class BaseChartManager implements IChart {
         mRightYAxis.setEnabled(false);
     }
 
+    void initX() {
+        mXAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        mXAxis.setDrawGridLines(false);
+        mXAxis.setGridColor(Color.BLUE);//X轴刻度线颜色
+        mXAxis.setTextColor(Color.BLACK);//X轴文字颜色
+        mXAxis.setLabelCount(3);
+        mXAxis.setAvoidFirstLastClipping(true);
+    }
+
+    abstract void initLabels();
+
     @Override
-    public void addLineData(LineData lineData) {
+    public void bindChart(Chart[] charts) {
+        mCombineChart.setOnChartGestureListener(new CoupleChartGestureListener(mCombineChart, charts));
+    }
+
+    @Override
+    public void setData(List<KLineEntity.DataBean> lists) {
+        mSize = null == lists ? 0 : lists.size();
+    }
+
+    @Override
+    public void showChart() {
+        mCombineChart.clear();
+        mCombineChart.setData(mCombinedData);
+        mXAxis.setAxisMinimum(-0.5f);
+        mXAxis.setAxisMaximum(mSize - 0.5f);
+        mCombineChart.setVisibleXRangeMinimum(3);
+        mCombineChart.zoom(0f,0f,0,0);
+        mCombineChart.zoom(mSize < 20 ? 0f : 15f, 0f, 0, 0);
+        mCombineChart.moveViewToX(mSize);
+        mCombineChart.invalidate();
+    }
+
+    void setValueFormatter(IAxisValueFormatter iAxisValueFormatter) {
+        mXAxis.setValueFormatter(iAxisValueFormatter);
+    }
+
+    void addLineData(LineData lineData) {
         mCombinedData.setData(lineData);
     }
 
-    @Override
-    public void addCandleData(CandleData candleData) {
+    void addCandleData(CandleData candleData) {
         mCombinedData.setData(candleData);
     }
 
-    @Override
-    public void addBarData(BarData barData) {
+    void addBarData(BarData barData) {
         mCombinedData.setData(barData);
     }
 
     void cleanAllData() {
         mCombinedData = new CombinedData();
     }
-
-    abstract void initLabels();
 }
