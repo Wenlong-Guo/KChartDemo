@@ -59,17 +59,17 @@ public class KLineChartManager extends BaseChartManager implements IChart {
 
     private LineData getLineData(List<DataBean> list) {
         LineData lineData = new LineData();
-        lineData.addDataSet(getMALineDataSet(5, list,  getColor(R.color.MA5),"ma5"));
-        lineData.addDataSet(getMALineDataSet(10, list, getColor(R.color.MA10),"ma10"));
-        lineData.addDataSet(getMALineDataSet(20, list, getColor(R.color.MA20),"ma20"));
+        lineData.addDataSet(getMALineDataSet(5, list, getColor(R.color.MA5), "ma5"));
+        lineData.addDataSet(getMALineDataSet(10, list, getColor(R.color.MA10), "ma10"));
+        lineData.addDataSet(getMALineDataSet(20, list, getColor(R.color.MA20), "ma20"));
         return lineData;
     }
 
-    private int getColor(@ColorRes int id){
+    private int getColor(@ColorRes int id) {
         return mCombineChart.getContext().getResources().getColor(id);
     }
 
-    private LineDataSet getMALineDataSet(int days, List<DataBean> list, int color,String label) {
+    private LineDataSet getMALineDataSet(int days, List<DataBean> list, int color, String label) {
         ArrayList<Float> floats = new ArrayList<>();
         for (DataBean b : list) floats.add(b.getClose());
         List<Entry> strings = Utils.countMA(floats, days);
@@ -110,22 +110,5 @@ public class KLineChartManager extends BaseChartManager implements IChart {
 
     @Override
     void initLabels() {
-        LegendEntry legendEntry = new LegendEntry();
-
-//        Legend l = mCombineChart.getLegend();  // 设置比例图标示
-//        l.setPosition(Legend.LegendPosition.BELOW_CHART_RIGHT);  //显示位置
-//        l.setForm(Legend.LegendForm.SQUARE);// 样式
-//        l.setFormSize(6f);// 字号
-//        l.setTextColor(Color.WHITE);// 颜色
-//
-//        List<String> labels = new ArrayList<>();
-//        labels.add("红涨");
-//        labels.add("绿跌");
-//        List<Integer> colors = new ArrayList<>();
-//        colors.add(Color.RED);
-//        colors.add(Color.GREEN);
-//        l.setExtra(colors, labels);//设置标注的颜色及内容，设置的效果如下图
-//
-//        l.setEnabled(true);//决定显不显示标签
     }
 }
